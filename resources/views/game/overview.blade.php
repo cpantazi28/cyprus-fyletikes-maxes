@@ -122,143 +122,62 @@
             <span class="text-xs">Loyalty: <strong class="{{ $village->loyalty < 100 ? 'text-red-300 font-bold' : 'text-green-300' }}">{{ number_format($village->loyalty, 1) }}%</strong></span>
         </div>
 
-        <!-- Village Graphic Map Canvas Grid -->
-        <div class="relative w-full rounded overflow-hidden border border-[#522f12] my-2 bg-[#2d4d1f] shadow-inner" style="min-height: 380px; background-image: radial-gradient(circle at 50% 50%, #477832 0%, #203b14 100%);">
-            
-            <!-- Atmospheric Village Ground Elements -->
+        @php
+            $villageBuildings = [
+                ['name' => 'Headquarters', 'key' => 'main', 'level' => $village->main, 'icon' => '🏛️', 'route' => 'game.building.show'],
+                ['name' => 'Barracks', 'key' => 'barracks', 'level' => $village->barracks, 'icon' => '⚔️', 'route' => 'game.building.show'],
+                ['name' => 'Stable', 'key' => 'stable', 'level' => $village->stable, 'icon' => '🐎', 'route' => 'game.building.show'],
+                ['name' => 'Workshop', 'key' => 'garage', 'level' => $village->garage, 'icon' => '🪵', 'route' => 'game.building.show'],
+                ['name' => 'Academy', 'key' => 'snob', 'level' => $village->snob, 'icon' => '👑', 'route' => 'game.building.show'],
+                ['name' => 'Smithy', 'key' => 'smith', 'level' => $village->smith, 'icon' => '⚒️', 'route' => 'game.building.show'],
+                ['name' => 'Rally Point', 'key' => 'place', 'level' => $village->place, 'icon' => '🚩', 'route' => 'game.place'],
+                ['name' => 'Market', 'key' => 'market', 'level' => $village->market, 'icon' => '⚖️', 'route' => 'game.building.show'],
+                ['name' => 'Timber Camp', 'key' => 'wood', 'level' => $village->wood_level, 'icon' => '🌲', 'route' => 'game.building.show'],
+                ['name' => 'Clay Pit', 'key' => 'stone', 'level' => $village->stone_level, 'icon' => '🧱', 'route' => 'game.building.show'],
+                ['name' => 'Iron Mine', 'key' => 'iron', 'level' => $village->iron_level, 'icon' => '⛏️', 'route' => 'game.building.show'],
+                ['name' => 'Farm', 'key' => 'farm', 'level' => $village->farm_level, 'icon' => '🌾', 'route' => 'game.building.show'],
+                ['name' => 'Warehouse', 'key' => 'storage', 'level' => $village->storage_level, 'icon' => '📦', 'route' => 'game.building.show'],
+                ['name' => 'Hideout', 'key' => 'hide', 'level' => $village->hide_level, 'icon' => '🕳️', 'route' => 'game.building.show'],
+            ];
+        @endphp
+
+        <!-- Isometric-style village scene with a visible perimeter and building roster -->
+        <div class="relative w-full rounded overflow-hidden border border-[#522f12] my-2 bg-[#2d4d1f] shadow-inner p-3 sm:p-5" style="min-height: 460px; background-image: radial-gradient(circle at 50% 50%, #477832 0%, #203b14 100%);">
             <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(#d5c28a 1.5px, transparent 1.5px); background-size: 24px 24px;"></div>
+            <div class="relative min-h-[410px] rounded-lg border-4 border-[#8b6a35] bg-[#477832]/50 p-2 sm:p-4 shadow-[inset_0_0_30px_rgba(19,45,12,0.65)]">
+                <div class="absolute inset-2 sm:inset-4 border-2 border-dashed border-[#d5c28a]/50 rounded pointer-events-none"></div>
 
-            <!-- Village Center Visual Layout -->
-            <div class="p-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-
-                <!-- 1. Headquarters -->
-                <a href="{{ route('game.building.show', 'main') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🏛️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Headquarters</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->main }}</span>
+                <!-- Four clickable wall sections make the wall level visible as part of the settlement -->
+                <a href="{{ route('game.building.show', 'wall') }}" class="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-5 sm:h-7 bg-[#88704b] border-2 border-[#d8ba6a] shadow-lg flex items-center justify-center z-10 hover:brightness-125" title="Wall Level {{ $village->wall_level }}">
+                    <span class="text-[10px] sm:text-xs font-bold text-[#2b1704]">🛡️ North Wall · Lv {{ $village->wall_level }}</span>
+                </a>
+                <a href="{{ route('game.building.show', 'wall') }}" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-3/4 h-5 sm:h-7 bg-[#88704b] border-2 border-[#d8ba6a] shadow-lg flex items-center justify-center z-10 hover:brightness-125" title="Wall Level {{ $village->wall_level }}">
+                    <span class="text-[10px] sm:text-xs font-bold text-[#2b1704]">South Wall · Lv {{ $village->wall_level }}</span>
+                </a>
+                <a href="{{ route('game.building.show', 'wall') }}" class="absolute left-0 top-1/2 -translate-y-1/2 w-5 sm:w-7 h-3/4 bg-[#88704b] border-2 border-[#d8ba6a] shadow-lg flex items-center justify-center z-10 hover:brightness-125" title="Wall Level {{ $village->wall_level }}">
+                    <span class="text-[10px] font-bold text-[#2b1704] [writing-mode:vertical-rl]">West · Lv {{ $village->wall_level }}</span>
+                </a>
+                <a href="{{ route('game.building.show', 'wall') }}" class="absolute right-0 top-1/2 -translate-y-1/2 w-5 sm:w-7 h-3/4 bg-[#88704b] border-2 border-[#d8ba6a] shadow-lg flex items-center justify-center z-10 hover:brightness-125" title="Wall Level {{ $village->wall_level }}">
+                    <span class="text-[10px] font-bold text-[#2b1704] [writing-mode:vertical-rl]">East · Lv {{ $village->wall_level }}</span>
                 </a>
 
-                <!-- 2. Barracks -->
-                @if($village->barracks > 0)
-                <a href="{{ route('game.building.show', 'barracks') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">⚔️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Barracks</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->barracks }}</span>
-                </a>
-                @endif
-
-                <!-- 3. Stable -->
-                @if($village->stable > 0)
-                <a href="{{ route('game.building.show', 'stable') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🐎</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Stable</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->stable }}</span>
-                </a>
-                @endif
-
-                <!-- 4. Workshop -->
-                @if($village->garage > 0)
-                <a href="{{ route('game.building.show', 'garage') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🪵</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Workshop</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->garage }}</span>
-                </a>
-                @endif
-
-                <!-- 5. Academy -->
-                @if($village->snob > 0)
-                <a href="{{ route('game.building.show', 'snob') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">👑</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Academy</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->snob }}</span>
-                </a>
-                @endif
-
-                <!-- 6. Smithy -->
-                @if($village->smith > 0)
-                <a href="{{ route('game.building.show', 'smith') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">⚒️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Smithy</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->smith }}</span>
-                </a>
-                @endif
-
-                <!-- 7. Rally Point -->
-                <a href="{{ route('game.place') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🚩</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Rally Point</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->place }}</span>
-                </a>
-
-                <!-- 8. Market -->
-                @if($village->market > 0)
-                <a href="{{ route('game.building.show', 'market') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">⚖️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Market</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->market }}</span>
-                </a>
-                @endif
-
-                <!-- 9. Timber Camp -->
-                <a href="{{ route('game.building.show', 'wood') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🌲</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Timber Camp</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->wood_level }}</span>
-                </a>
-
-                <!-- 10. Clay Pit -->
-                <a href="{{ route('game.building.show', 'stone') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🧱</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Clay Pit</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->stone_level }}</span>
-                </a>
-
-                <!-- 11. Iron Mine -->
-                <a href="{{ route('game.building.show', 'iron') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">⛏️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Iron Mine</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->iron_level }}</span>
-                </a>
-
-                <!-- 12. Farm -->
-                <a href="{{ route('game.building.show', 'farm') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🌾</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Farm</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->farm_level }}</span>
-                </a>
-
-                <!-- 13. Warehouse -->
-                <a href="{{ route('game.building.show', 'storage') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">📦</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Warehouse</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->storage_level }}</span>
-                </a>
-
-                <!-- 14. Hideout -->
-                <a href="{{ route('game.building.show', 'hide') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🕳️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Hideout</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->hide_level }}</span>
-                </a>
-
-                <!-- 15. Wall -->
-                @if($village->wall_level > 0)
-                <a href="{{ route('game.building.show', 'wall') }}" class="group relative flex flex-col items-center justify-center p-3 rounded bg-[#5a3416]/85 hover:bg-[#7c4c23] border-2 border-[#caa552] text-[#fff2cc] shadow-md transition-transform hover:-translate-y-0.5">
-                    <span class="text-3xl mb-1">🛡️</span>
-                    <span class="text-xs font-bold text-center group-hover:text-yellow-200">Wall</span>
-                    <span class="text-[11px] bg-[#361c07] px-1.5 py-0.2 rounded mt-1 font-bold text-yellow-400">Lv {{ $village->wall_level }}</span>
-                </a>
-                @endif
-
+                <div class="relative z-0 grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 pt-5 pb-5 sm:pt-8 sm:pb-8 px-5 sm:px-8">
+                    @foreach($villageBuildings as $building)
+                        <a href="{{ $building['route'] === 'game.place' ? route($building['route']) : route($building['route'], $building['key']) }}" class="group min-h-[88px] sm:min-h-[104px] flex flex-col items-center justify-center p-2 rounded-md border-2 {{ $building['level'] > 0 ? 'bg-[#5a3416]/90 border-[#caa552] text-[#fff2cc]' : 'bg-[#332516]/70 border-[#8b785c] text-[#b8aa8e]' }} shadow-md transition-all hover:-translate-y-1 hover:brightness-125">
+                            <span class="text-2xl sm:text-3xl leading-none mb-1 {{ $building['level'] === 0 ? 'grayscale opacity-70' : '' }}">{{ $building['icon'] }}</span>
+                            <span class="text-[10px] sm:text-xs font-bold text-center leading-tight">{{ $building['name'] }}</span>
+                            <span class="text-[10px] sm:text-[11px] bg-[#361c07] px-1.5 py-0.5 rounded mt-1 font-bold {{ $building['level'] > 0 ? 'text-yellow-400' : 'text-[#b8aa8e]' }}">Lv {{ $building['level'] }}</span>
+                        </a>
+                    @endforeach
+                </div>
             </div>
-
         </div>
 
     </div>
 
     <!-- Stationed Troops & Production Rates Table -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        
+
         <!-- Troops in Village -->
         <div class="tw-panel p-3">
             <h3 class="font-bold text-sm text-[#4a290e] border-b border-[#c2a46c] pb-1 mb-2 flex items-center justify-between">
