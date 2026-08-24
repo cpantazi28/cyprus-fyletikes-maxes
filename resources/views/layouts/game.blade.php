@@ -162,6 +162,10 @@
         .pulse-attack {
             animation: pulse-red 1s infinite;
         }
+
+        html {
+            scroll-behavior: auto;
+        }
     </style>
 </head>
 <body class="min-h-screen antialiased flex flex-col items-center">
@@ -194,7 +198,7 @@
         @if(isset($currentVillage))
         <div class="tw-panel p-2 shadow-lg">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-[#c2a46c] pb-2 mb-2">
-                
+
                 <!-- Village Switcher & Coordinates -->
                 <div class="flex items-center gap-2">
                     <span class="text-xs uppercase tracking-wider font-bold text-[#693d18]">Village:</span>
@@ -213,7 +217,7 @@
 
                 <!-- Live Resources Tickers -->
                 <div class="flex items-center gap-4 text-sm font-bold">
-                    
+
                     <!-- Wood -->
                     <div class="flex items-center gap-1.5" title="Wood: +{{ $currentVillage->wood_production_per_hour }}/hr">
                         <span class="inline-block w-4 h-4 rounded bg-[#8a5229] border border-[#3d1f08] text-center text-[10px] text-white font-bold leading-3.5">W</span>
@@ -372,7 +376,21 @@
 
     <!-- Live Resource & Countdown JavaScript Ticker -->
     <script>
+        const buildingUpgradeScrollKey = 'building-upgrade-scroll-position';
+
         document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('form[action*="/upgrade"]').forEach(form => {
+                form.addEventListener('submit', () => {
+                    sessionStorage.setItem(buildingUpgradeScrollKey, String(window.scrollY));
+                });
+            });
+
+            const savedScrollPosition = sessionStorage.getItem(buildingUpgradeScrollKey);
+            if (savedScrollPosition !== null) {
+                sessionStorage.removeItem(buildingUpgradeScrollKey);
+                requestAnimationFrame(() => window.scrollTo(0, Number(savedScrollPosition)));
+            }
+
             @if(isset($currentVillage))
                 let wood = {{ (float) $currentVillage->wood }};
                 let clay = {{ (float) $currentVillage->clay }};
@@ -406,7 +424,7 @@
                     if (seconds > 0) {
                         seconds--;
                         el.setAttribute('data-countdown', seconds);
-                        
+
                         const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
                         const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
                         const s = String(seconds % 60).padStart(2, '0');
