@@ -4,13 +4,11 @@ namespace App\Services;
 
 use App\Models\Village;
 
-class ResourceService
-{
+class ResourceService {
     /**
      * Accrue resources and recover loyalty based on elapsed time.
      */
-    public function accrueResources(Village $village): Village
-    {
+    public function accrueResources(Village $village): Village {
         $now = now();
         $lastUpdate = $village->last_resource_update ?? $village->created_at ?? $now;
         $seconds = $lastUpdate->diffInSeconds($now);
@@ -39,7 +37,10 @@ class ResourceService
 
             if ($loyaltySeconds > 0) {
                 $speed = config('game.world.speed', 1.0);
-                $recoveryPerHour = config('game.world.loyalty_recovery_per_hour', 1.0) * $speed;
+
+                $loyaltySpeed = min(100, $speed);
+
+                $recoveryPerHour = config('game.world.loyalty_recovery_per_hour', 1.0) * $loyaltySpeed;
                 $loyaltyGained = ($recoveryPerHour / 3600) * $loyaltySeconds;
 
                 $village->loyalty = min(100.0, (float) $village->loyalty + $loyaltyGained);
@@ -57,16 +58,14 @@ class ResourceService
     /**
      * Check if the village has sufficient resources.
      */
-    public function canAfford(Village $village, int $wood, int $clay, int $iron): bool
-    {
+    public function canAfford(Village $village, int $wood, int $clay, int $iron): bool {
         return $village->wood >= $wood && $village->clay >= $clay && $village->iron >= $iron;
     }
 
     /**
      * Deduct resources from the village.
      */
-    public function deductResources(Village $village, int $wood, int $clay, int $iron): bool
-    {
+    public function deductResources(Village $village, int $wood, int $clay, int $iron): bool {
         if (! $this->canAfford($village, $wood, $clay, $iron)) {
             return false;
         }
@@ -83,8 +82,7 @@ class ResourceService
     /**
      * Add resources to the village respecting storage capacity.
      */
-    public function addResources(Village $village, int $wood, int $clay, int $iron): array
-    {
+    public function addResources(Village $village, int $wood, int $clay, int $iron): array {
         $capacity = $village->storage_capacity;
 
         $woodAdded = min($wood, max(0, $capacity - (int) $village->wood));

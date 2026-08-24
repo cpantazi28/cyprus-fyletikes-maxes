@@ -8,17 +8,16 @@ use App\Models\Village;
 use App\Models\VillageSupport;
 use App\Models\VillageUnit;
 
-class BattleEngine
-{
+class BattleEngine {
     public function __construct(
         protected ResourceService $resourceService
-    ) {}
+    ) {
+    }
 
     /**
      * Resolve an attack movement and its combat outcomes.
      */
-    public function resolveBattle(Movement $movement): void
-    {
+    public function resolveBattle(Movement $movement): void {
         $attackerVillage = $movement->sourceVillage;
         $defenderVillage = $movement->targetVillage;
 
@@ -428,7 +427,7 @@ class BattleEngine
             Report::create([
                 'user_id' => $attackerVillage->user_id,
                 'type' => 'attack',
-                'title' => ($attackerVillage->user->name ?? 'Attacker').' attacks '.$defenderVillage->name." ({$defenderVillage->coordinates})",
+                'title' => ($attackerVillage->user->name ?? 'Attacker') . ' attacks ' . $defenderVillage->name . " ({$defenderVillage->coordinates})",
                 'data' => $reportData,
                 'is_read' => false,
             ]);
@@ -439,7 +438,7 @@ class BattleEngine
             Report::create([
                 'user_id' => $defenderVillage->user_id,
                 'type' => 'defense',
-                'title' => ($attackerVillage->user->name ?? 'Attacker').' attacks '.$defenderVillage->name." ({$defenderVillage->coordinates})",
+                'title' => ($attackerVillage->user->name ?? 'Attacker') . ' attacks ' . $defenderVillage->name . " ({$defenderVillage->coordinates})",
                 'data' => $reportData,
                 'is_read' => false,
             ]);
